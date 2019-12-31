@@ -1,0 +1,59 @@
+{%extends 'bootstrap/base.html' %}
+{%block content %}
+
+
+    <div class="container">
+        <div class="jumbotron text-center"
+        <h2>NATURAL LANGUAGE PROCESSING</h2>
+        </div>   
+    </div>
+
+    <div class = "container">
+        <form action = "{{url_for('analyze')}}" method="POST" id="myForm">
+            <textarea name = "rawtext" row = "3" cols = "3" class = "form-control">
+    
+            </textarea>
+            <input type="submit" name="" value = "Submit" class = "btn-primary">
+            <input type="reset" name="" value = "Clear" class = "btn-primary">
+            <a href="{{url_for('index')}}" type="button" class = "btn-primary">Reset</a>
+        </form>
+    </div>
+
+    <div class = "container">
+        <div class = "card">
+            <div>
+                <p> {{received_text}}</p>
+            </div>
+            <hr/>
+            <div class = "card-body">
+                {% for i in summary %}
+                <li>{{i}}
+                    <a href = "https://www.dictionary.com/browse/{{i}}?s=t" target="blank_" type = "button" class = "btn btn-primary">Define?</a>
+                </li>
+                {% endfor %}
+
+            </div>
+            <table class = "table table-striped table-dark">
+                <thead>
+                    <tr>
+                        <th scope = "col">Sentiment</th>
+                        <th scope = "col">Polarity</th>
+                        <th scope = "col">Subjectivity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope = "row">Score:</th>
+                        <td>{{blob_sentiment}}</td>
+                        <td>{{blob_subjectivity}}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+            
+
+        </div>
+    </div>
+
+
+{% endblock %}
