@@ -20,7 +20,7 @@ def analyze():
 	if request.method == 'POST':
 		rawtext = request.form['rawtext']
 		blob = TextBlob(rawtext)
-		received_text2 = blob
+		received_text = blob
 		blob_sentiment,blob_subjectivity = blob.sentiment.polarity ,blob.sentiment.subjectivity
 		number_of_tokens = len(list(blob.words))
 		nouns = list()
@@ -38,7 +38,7 @@ def analyze():
 		        	final_time = end-start
 
 
-	return render_template('index.html',received_text = received_text2,number_of_tokens=number_of_tokens,blob_sentiment=blob_sentiment,blob_subjectivity=blob_subjectivity,summary=summary,final_time=final_time)
+	return render_template('index.html',received_text = received_text,number_of_tokens=number_of_tokens,blob_sentiment=blob_sentiment,blob_subjectivity=blob_subjectivity,summary=summary,final_time=final_time)
 
 
 
