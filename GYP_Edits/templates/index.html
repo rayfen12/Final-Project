@@ -6,7 +6,16 @@
         <div class="jumbotron text-center">
         <h2>NATURAL LANGUAGE PROCESSING</h2>
         </div>   
-    </div>
+	</div>
+	
+	<div class="row">      
+		<div class="col-md-6">        
+			<div class="well">          
+				<h5>SELECT Episode:</h5>          
+				<select id="selDataset" onchange="optionChanged(this.value)"></select>        
+			</div>           
+		</div>
+	</div>
 
     <div class = "container">
         <form action = "{{url_for('analyze')}}" method="POST" id="myForm">
