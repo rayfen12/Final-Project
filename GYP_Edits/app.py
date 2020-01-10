@@ -35,19 +35,51 @@ def analyze():
 
 	#Call Twitter API to request tweets with the $rawtext (using the $ for now for testing)
 		t = Twitter(auth=OAuth(token, token_secret, consumer_key, consumer_secret))
-		tweets= t.search.tweets(q=f'{str(select)}{rawtext}', include_rts=False, tweet_mode='extended')
+		tweets= t.search.tweets(q=f'{str(select)}{rawtext}', include_rts=False, tweet_mode='extended',count=100)
 
 	#Get the tweet text (tw1) and and the sentiment (tw2), appened them to lists
 	#Also counted how many elements there are in each list to make sure they match
-		tweet_list = tweets['statuses']
-		tw1=[]
-		tw2=[]
-		for i in tweet_list:
-			tw1.append(i['full_text'])
-			analysis = TextBlob(i['full_text'])
-			tw2.append(analysis.sentiment.polarity)
-		count_tw1 = len(tw1)
-		count_tw2 = len(tw2)
+		m_dict = tweets['statuses']
+
+		tw_list_date = []
+		tw_list_screen_name = []
+		tw_list_text = []
+		tw_list_retweet = []
+		tw_list_likes = []
+		tw_list_id = []
+		tw_list_polarity = []
+		for element in m_dict:
+			tw_list_date.append(element['created_at'])
+			tw_list_screen_name.append(element['user']['screen_name'])
+			tw_list_text.append(element['full_text'])
+			tw_list_retweet.append(element['retweet_count'])
+			tw_list_likes.append(element['favorite_count'])
+			tw_list_id.append(element['id'])
+			analysis = TextBlob(element['full_text'])
+			tw_list_polarity.append(analysis.sentiment.polarity)
+
+		tw_df = pd.DataFrame(list(zip(tw_list_date, tw_list_screen_name, tw_list_text, tw_list_retweet, tw_list_likes, tw_list_id, tw_list_polarity)), columns =['created_date', 'handle', 'text', 'retweet_count', 'likes_count', 'tweet_id', 'polarity'])
+		sentiment_list = [] 
+		for value in tw_df["polarity"]: 
+			if value == -1: 
+				sentiment_list.append("Negative") 
+			elif value > -1 and value < 0: 
+				sentiment_list.append("Somewhat Negative")
+			elif value == 0:
+				sentiment_list.append('Neutral')
+			elif value >= 0.1 and value <= 0.5:
+				sentiment_list.append('Somewhat Postive')
+			else: 
+				sentiment_list.append("Positive") 
+			
+		tw_df['sentiment'] = sentiment_list
+		tw_html = tw_df.to_html()
+		tw_html2 = tw_html.replace('\n', '')
+
+		return render_template('index.html',tw_html=tw_html2)
+
+
+
 
 	else:
 		rawtext = request.form['rawtext']
@@ -57,18 +89,47 @@ def analyze():
 		consumer_secret = 'Y0SHSL0H9X9gCtuy07mJ3cp144DS2JhwX4Uvgda2ph8NvIUswJ'
 
 		t = Twitter(auth=OAuth(token, token_secret, consumer_key, consumer_secret))
-		tweets= t.statuses.user_timeline(screen_name=f'{rawtext}', count=20, include_rts=False, tweet_mode = 'extended')
+		tweets= t.statuses.user_timeline(screen_name=f'{rawtext}', count=100, include_rts=False, tweet_mode = 'extended')
 
 	#Get the tweet text (tw1) and and the sentiment (tw2), appened them to lists
 	#Also counted how many elements there are in each list to make sure they match
-		tw1 = []
-		tw2 = []
-		for x in tweets:
-			tw1.append(x['full_text'])
-			analysis = TextBlob(x['full_text'])
-			tw2.append(analysis.sentiment.polarity)
-		count_tw1 = len(tw1)
-		count_tw2 = len(tw2)
+		tw_list_date = []
+		tw_list_screen_name = []
+		tw_list_text = []
+		tw_list_retweet = []
+		tw_list_likes = []
+		tw_list_id = []
+		tw_list_polarity = []
+		for element in tweets:
+			tw_list_date.append(element['created_at'])
+			tw_list_screen_name.append(element['user']['screen_name'])
+			tw_list_text.append(element['full_text'])
+			tw_list_retweet.append(element['retweet_count'])
+			tw_list_likes.append(element['favorite_count'])
+			tw_list_id.append(element['id'])
+			analysis = TextBlob(element['full_text'])
+			tw_list_polarity.append(analysis.sentiment.polarity)
+
+		tw_df = pd.DataFrame(list(zip(tw_list_date, tw_list_screen_name, tw_list_text, tw_list_retweet, tw_list_likes, tw_list_id, tw_list_polarity)), columns =['created_date', 'handle', 'text', 'retweet_count', 'likes_count', 'tweet_id', 'polarity'])
+		sentiment_list = [] 
+		for value in tw_df["polarity"]: 
+			if value == -1: 
+				sentiment_list.append("Negative") 
+			elif value > -1 and value < 0: 
+				sentiment_list.append("Somewhat Negative")
+			elif value == 0:
+				sentiment_list.append('Neutral')
+			elif value >= 0.1 and value <= 0.5:
+				sentiment_list.append('Somewhat Postive')
+			else: 
+				sentiment_list.append("Positive") 
+			
+		tw_df['sentiment'] = sentiment_list
+		tw_html = tw_df.to_html()
+		tw_html2 = tw_html.replace('\n', '')
+
+		return render_template('index.html',tw_html=tw_html2)
+
 		
 	#redered to display on page
 	return render_template('index.html',tw1=tw1,tw2=tw2,count_tw1=count_tw1,count_tw2=count_tw2)

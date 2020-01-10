@@ -16,7 +16,7 @@
 						<option value="#">Hashtag</option>
 						<option value="$">Ticker</option>
 						<option value="hdl">Handle</option>
-						<option value="fs">Free Search</option>
+						<option value="">Free Search</option>
 					  </select>       
 		</div>
 	</div>
@@ -30,20 +30,21 @@
             <input type="reset" name="" value = "Clear" class = "btn-primary">
             <a href="{{url_for('index')}}" type="button" class = "btn-primary">Reset</a>
         </form>
-    </div>
+	</div>
+
+	<div class = "container">
+		<div class="table_entrances" style="overflow-x: auto;">
+				<table id="table">
+				<thead></thead> 
+				<tr></tr>
+				</table>
+		</div>
+	</div>	
 
     <div class = "container">
-        <div class = "card">
+        <div class = "table">
             <div>
-				<p>{{tw1}}</p>
-				<p>---------</p>
-				<p>{{tw2}}</p>
-				<p>{{count_tw1}}</p>
-				<p>{{count_tw2}}</p>
-		
-				
-
-				
+				{{tw_html | safe}}	
             </div>
             <hr/>
             <div class = "card-body">
