@@ -21,10 +21,11 @@ def index():
 @app.route('/analyse',methods=['POST'])
 def analyze():
 	start = time.time()
-	
+	select = request.form.get('comp_select')
 	#get the raw text from the input box
-	if request.method == 'POST':
+	if request.method == 'POST' and select != "hdl":	
 		rawtext = request.form['rawtext']
+		
 
 	#Twitter API tokens	
 		token = '1212463191910842368-l00ryMICeXQXXawl8w2zazEoFS7xDf'
@@ -34,7 +35,7 @@ def analyze():
 
 	#Call Twitter API to request tweets with the $rawtext (using the $ for now for testing)
 		t = Twitter(auth=OAuth(token, token_secret, consumer_key, consumer_secret))
-		tweets= t.search.tweets(q=f'${rawtext}', include_rts=False, tweet_mode='extended')
+		tweets= t.search.tweets(q=f'{str(select)}{rawtext}', include_rts=False, tweet_mode='extended')
 
 	#Get the tweet text (tw1) and and the sentiment (tw2), appened them to lists
 	#Also counted how many elements there are in each list to make sure they match
@@ -44,6 +45,27 @@ def analyze():
 		for i in tweet_list:
 			tw1.append(i['full_text'])
 			analysis = TextBlob(i['full_text'])
+			tw2.append(analysis.sentiment.polarity)
+		count_tw1 = len(tw1)
+		count_tw2 = len(tw2)
+
+	else:
+		rawtext = request.form['rawtext']
+		token = '1212463191910842368-l00ryMICeXQXXawl8w2zazEoFS7xDf'
+		token_secret = 'hbzjFRq1r2ygkydPXfrwrhm5zTa54F3mYEm2wi7Q09DgA'
+		consumer_key = 'g8V7jnF3dqMfg4LRhtobYB4Pl'
+		consumer_secret = 'Y0SHSL0H9X9gCtuy07mJ3cp144DS2JhwX4Uvgda2ph8NvIUswJ'
+
+		t = Twitter(auth=OAuth(token, token_secret, consumer_key, consumer_secret))
+		tweets= t.statuses.user_timeline(screen_name=f'{rawtext}', count=20, include_rts=False, tweet_mode = 'extended')
+
+	#Get the tweet text (tw1) and and the sentiment (tw2), appened them to lists
+	#Also counted how many elements there are in each list to make sure they match
+		tw1 = []
+		tw2 = []
+		for x in tweets:
+			tw1.append(x['full_text'])
+			analysis = TextBlob(x['full_text'])
 			tw2.append(analysis.sentiment.polarity)
 		count_tw1 = len(tw1)
 		count_tw2 = len(tw2)

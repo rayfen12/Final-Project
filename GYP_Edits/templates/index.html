@@ -6,7 +6,20 @@
         <div class="jumbotron text-center">
         <h2>NATURAL LANGUAGE PROCESSING</h2>
         </div>   
-    </div>
+	</div>
+	
+	<div class="row">      
+		<div class="col-md-6"> 
+				<form action = "{{url_for('analyze')}}" method="POST" id="myForm">       
+				<select name = 'comp_select' class="mdb-select md-form" onchange="selector()">
+						<option value="" disabled selected>Choose your option</option>
+						<option value="#">Hashtag</option>
+						<option value="$">Ticker</option>
+						<option value="hdl">Handle</option>
+						<option value="fs">Free Search</option>
+					  </select>       
+		</div>
+	</div>
 
     <div class = "container">
         <form action = "{{url_for('analyze')}}" method="POST" id="myForm">
