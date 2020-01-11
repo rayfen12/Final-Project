@@ -4,11 +4,15 @@ import numpy as np
 from twitter import *
 import pandas as pd 
 import datetime
-
-
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 from textblob import TextBlob,Word 
 import random 
 import time
+import plotly.express as px
+import plotly as py
+import plotly.graph_objs as go
+
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -35,7 +39,7 @@ def analyze():
 
 	#Call Twitter API to request tweets with the $rawtext (using the $ for now for testing)
 		t = Twitter(auth=OAuth(token, token_secret, consumer_key, consumer_secret))
-		tweets= t.search.tweets(q=f'{str(select)}{rawtext}', include_rts=False, tweet_mode='extended',count=100)
+		tweets= t.search.tweets(q=f'{str(select)}{rawtext}', include_rts=False, tweet_mode='extended',count=200)
 
 	#Get the tweet text (tw1) and and the sentiment (tw2), appened them to lists
 	#Also counted how many elements there are in each list to make sure they match
@@ -71,12 +75,32 @@ def analyze():
 				sentiment_list.append('Somewhat Postive')
 			else: 
 				sentiment_list.append("Positive") 
-			
+		# ================================================	
 		tw_df['sentiment'] = sentiment_list
-		tw_html = tw_df.to_html()
+		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 100)]
+		tw_html = tw_df1.to_html()
 		tw_html2 = tw_html.replace('\n', '')
-
-		return render_template('index.html',tw_html=tw_html2)
+		# ================================================	
+		average_sentiment = tw_df1["polarity"].mean()
+		fig2 = go.Figure(go.Indicator(
+			domain = {'x': [0, 1], 'y': [0, 1]},
+			value = average_sentiment,
+			mode = "gauge+number+delta",
+			title = {'text': "Sentiment"},
+			gauge = {'axis': {'range': [-1, 1]},
+					'bar': {'color': "grey"},
+					'steps' : [
+						{'range': [-1, -0.5], 'color': "indianred"},
+						{'range': [-0.5, 0], 'color': "red"},
+						{'range': [0, 0.5], 'color': "lightgreen"},
+						{'range': [0.5, 1], 'color': "green"}]}))
+		fig3 = fig2.to_html()
+		# ================================================	
+		fig1 = px.scatter(tw_df1, x='retweet_count', y='polarity', hover_name="handle", color = 'sentiment')
+		fig=fig1.to_html()
+		# ================================================
+					
+		return render_template('index.html',rawtext=rawtext,tw_html=tw_html2,fig=fig,fig3 = fig3)
 
 
 
@@ -124,17 +148,32 @@ def analyze():
 			else: 
 				sentiment_list.append("Positive") 
 			
+		# ================================================	
 		tw_df['sentiment'] = sentiment_list
-		tw_html = tw_df.to_html()
+		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 1000000)]
+		tw_html = tw_df1.to_html()
 		tw_html2 = tw_html.replace('\n', '')
-
-		return render_template('index.html',tw_html=tw_html2)
-
-		
-	#redered to display on page
-	return render_template('index.html',tw1=tw1,tw2=tw2,count_tw1=count_tw1,count_tw2=count_tw2)
-
-
+		# ================================================	
+		average_sentiment = tw_df1["polarity"].mean()
+		fig2 = go.Figure(go.Indicator(
+			domain = {'x': [0, 1], 'y': [0, 1]},
+			value = average_sentiment,
+			mode = "gauge+number+delta",
+			title = {'text': "Sentiment"},
+			gauge = {'axis': {'range': [-1, 1]},
+					'bar': {'color': "grey"},
+					'steps' : [
+						{'range': [-1, -0.5], 'color': "indianred"},
+						{'range': [-0.5, 0], 'color': "red"},
+						{'range': [0, 0.5], 'color': "lightgreen"},
+						{'range': [0.5, 1], 'color': "green"}]}))
+		fig3 = fig2.to_html()
+		# ================================================	
+		fig1 = px.scatter(tw_df1, x='retweet_count', y='polarity', hover_name="handle", color = 'sentiment')
+		fig=fig1.to_html()
+		# ================================================
+					
+		return render_template('index.html',rawtext=rawtext,tw_html=tw_html2,fig=fig,fig3 = fig3)
 
 
 
