@@ -76,13 +76,17 @@ def analyze():
 		tw_html = tw_df.to_html()
 		tw_html2 = tw_html.replace('\n', '')
 
-		return render_template('index.html',tw_html=tw_html2)
-
 		scatter = go.Figure(go.Scatter(tw_df, x="No_of_likes", y="Polarity", size="No_of_likes", color="Sentiment",
            hover_name="Handle", log_x=True, size_max=60))
 		pio.write_html(scatter, file='scatter.html', auto_open=True)
 
-		return render_template('scatter.html')
+		return render_template('index.html',tw_html=tw_html2,scatter=scatter)
+
+		# scatter = go.Figure(go.Scatter(tw_df, x="No_of_likes", y="Polarity", size="No_of_likes", color="Sentiment",
+        #    hover_name="Handle", log_x=True, size_max=60))
+		# pio.write_html(scatter, file='scatter.html', auto_open=True)
+
+		# return render_template('scatter.html')
 	else:
 		rawtext = request.form['rawtext']
 		token = Credentials.token
@@ -132,14 +136,13 @@ def analyze():
 
 		return render_template('index.html',tw_html=tw_html2)
 
-		scatter = go.Figure(go.Scatter(tw_df, x="No_of_likes", y="Polarity", size="No_of_likes", color="Sentiment",
-           hover_name="Handle", log_x=True, size_max=60))
-		pio.write_html(scatter, file='scatter.html', auto_open=True)
+		# scatter = go.Figure(go.Scatter(tw_df, x="No_of_likes", y="Polarity", size="No_of_likes", color="Sentiment",
+        #    hover_name="Handle", log_x=True, size_max=60))
+		# pio.write_html(scatter, file='scatter.html', auto_open=True)
 
-		return render_template('scatter.html')
+		# return render_template('scatter.html')
 		
 	#redered to display on page
-	return render_template('scatter.html')
 	return render_template('index.html',tw1=tw1,tw2=tw2,count_tw1=count_tw1,count_tw2=count_tw2)
 
 
