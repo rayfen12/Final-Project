@@ -12,7 +12,8 @@ import time
 import plotly.express as px
 import plotly as py
 import plotly.graph_objs as go
-
+from sklearn.feature_extraction.text import TfidfVectorizer
+from collections import Counter
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -77,7 +78,7 @@ def analyze():
 				sentiment_list.append("Positive") 
 		# ================================================	
 		tw_df['sentiment'] = sentiment_list
-		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 100)]
+		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 200)]
 		tw_html = tw_df1.to_html()
 		tw_html2 = tw_html.replace('\n', '')
 		# ================================================	
@@ -99,7 +100,7 @@ def analyze():
 		fig1 = px.scatter(tw_df1, x='retweet_count', y='polarity', hover_name="handle", color = 'sentiment')
 		fig=fig1.to_html()
 		# ================================================
-					
+
 		return render_template('index.html',rawtext=rawtext,tw_html=tw_html2,fig=fig,fig3 = fig3)
 
 
@@ -150,7 +151,7 @@ def analyze():
 			
 		# ================================================	
 		tw_df['sentiment'] = sentiment_list
-		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 1000000)]
+		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 10000000)]
 		tw_html = tw_df1.to_html()
 		tw_html2 = tw_html.replace('\n', '')
 		# ================================================	
@@ -172,8 +173,17 @@ def analyze():
 		fig1 = px.scatter(tw_df1, x='retweet_count', y='polarity', hover_name="handle", color = 'sentiment')
 		fig=fig1.to_html()
 		# ================================================
-					
-		return render_template('index.html',rawtext=rawtext,tw_html=tw_html2,fig=fig,fig3 = fig3)
+        
+		vect = TfidfVectorizer(ngram_range=(2,5), stop_words='english')
+		summaries = "".join(tw_df1['text'])
+		ngrams_summaries = vect.build_analyzer()(summaries)
+		word = Counter(ngrams_summaries).most_common(5)
+		word_df = pd.DataFrame(word, columns=['common_words', 'word_count'])
+		wordfig = px.bar(word_df,x='word_count',y='common_words', color = 'word_count',orientation = 'h',labels={'word_count':'Word Count', 'common_words': 'Common Words'}, height=400)
+		wordfig1 = wordfig.to_html()
+
+			
+		return render_template('index.html',wordfig1=wordfig1,rawtext=rawtext,tw_html=tw_html2,fig=fig,fig3 = fig3)
 
 
 
