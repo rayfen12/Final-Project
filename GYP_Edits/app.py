@@ -14,6 +14,9 @@ import plotly as py
 import plotly.graph_objs as go
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import Counter
+pd.set_option('display.max_colwidth', -1)
+
+
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -25,7 +28,6 @@ def index():
 
 @app.route('/analyse',methods=['POST'])
 def analyze():
-	start = time.time()
 	select = request.form.get('comp_select')
 	#get the raw text from the input box
 	if request.method == 'POST' and select != "hdl":	
@@ -63,7 +65,7 @@ def analyze():
 			analysis = TextBlob(element['full_text'])
 			tw_list_polarity.append(analysis.sentiment.polarity)
 
-		tw_df = pd.DataFrame(list(zip(tw_list_date, tw_list_screen_name, tw_list_text, tw_list_retweet, tw_list_likes, tw_list_id, tw_list_polarity)), columns =['created_date', 'handle', 'text', 'retweet_count', 'likes_count', 'tweet_id', 'polarity'])
+		tw_df = pd.DataFrame(list(zip(tw_list_date, tw_list_screen_name, tw_list_text, tw_list_retweet, tw_list_likes, tw_list_polarity)), columns =['created_date', 'handle', 'text', 'retweet_count', 'likes_count', 'polarity'])
 		sentiment_list = [] 
 		for value in tw_df["polarity"]: 
 			if value == -1: 
@@ -78,8 +80,8 @@ def analyze():
 				sentiment_list.append("Positive") 
 		# ================================================	
 		tw_df['sentiment'] = sentiment_list
-		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 200)]
-		tw_html = tw_df1.to_html()
+		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 70)]
+		tw_html = tw_df1.to_html(classes=["table", "table-bordered", "table-striped", "table-hover"])
 		tw_html2 = tw_html.replace('\n', '')
 		# ================================================	
 		average_sentiment = tw_df1["polarity"].mean()
@@ -101,7 +103,21 @@ def analyze():
 		fig=fig1.to_html()
 		# ================================================
 
-		return render_template('index.html',rawtext=rawtext,tw_html=tw_html2,fig=fig,fig3 = fig3)
+		sorted_df= tw_df1.sort_values(by=['polarity'],ascending = False).head(1)
+		# best_tweet = sorted_df[sorted_df['polarity'] == sorted_df['polarity'].max()].head(1)
+		best_tweet = sorted_df
+		filtered_best_tweet = best_tweet.drop(columns=['created_date', 'retweet_count', 'likes_count'])
+		text1 = filtered_best_tweet.text.tolist()
+		name1 = filtered_best_tweet.handle.tolist()
+		pol1 = filtered_best_tweet.polarity.tolist()
+		sorted_df1= tw_df1.sort_values(by=['polarity'],ascending = True).head(1)
+		worst_tweet = sorted_df1
+		# worst_tweet = sorted_df[sorted_df['polarity'] == sorted_df['polarity'].min()]
+		filtered_worst_tweet = worst_tweet.drop(columns=['created_date', 'retweet_count', 'likes_count'])
+		text2 = filtered_worst_tweet.text.tolist()
+		name2 = filtered_worst_tweet.handle.tolist()
+		pol2 = filtered_worst_tweet.polarity.tolist()
+		return render_template('index.html',pol1 = pol1[0],pol2 = pol2[0],name2 = name2[0], text2 = text2[0],name1= name1[0],text1=text1[0],rawtext=rawtext,tw_html2=tw_html2,fig=fig,fig3 = fig3)
 
 
 
@@ -135,7 +151,7 @@ def analyze():
 			analysis = TextBlob(element['full_text'])
 			tw_list_polarity.append(analysis.sentiment.polarity)
 
-		tw_df = pd.DataFrame(list(zip(tw_list_date, tw_list_screen_name, tw_list_text, tw_list_retweet, tw_list_likes, tw_list_id, tw_list_polarity)), columns =['created_date', 'handle', 'text', 'retweet_count', 'likes_count', 'tweet_id', 'polarity'])
+		tw_df = pd.DataFrame(list(zip(tw_list_date, tw_list_screen_name, tw_list_text, tw_list_retweet, tw_list_likes,  tw_list_polarity)), columns =['created_date', 'handle', 'text', 'retweet_count', 'likes_count', 'polarity'])
 		sentiment_list = [] 
 		for value in tw_df["polarity"]: 
 			if value == -1: 
@@ -151,8 +167,8 @@ def analyze():
 			
 		# ================================================	
 		tw_df['sentiment'] = sentiment_list
-		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 10000000)]
-		tw_html = tw_df1.to_html()
+		tw_df1 = tw_df.loc[(tw_df['retweet_count'] >= 1) & (tw_df['retweet_count'] <= 50000)]
+		tw_html = tw_df1.to_html(classes=["table", "table-bordered", "table-striped", "table-hover"])
 		tw_html2 = tw_html.replace('\n', '')
 		# ================================================	
 		average_sentiment = tw_df1["polarity"].mean()
@@ -177,13 +193,27 @@ def analyze():
 		vect = TfidfVectorizer(ngram_range=(2,5), stop_words='english')
 		summaries = "".join(tw_df1['text'])
 		ngrams_summaries = vect.build_analyzer()(summaries)
-		word = Counter(ngrams_summaries).most_common(5)
+		word = Counter(ngrams_summaries).most_common(10)
 		word_df = pd.DataFrame(word, columns=['common_words', 'word_count'])
 		wordfig = px.bar(word_df,x='word_count',y='common_words', color = 'word_count',orientation = 'h',labels={'word_count':'Word Count', 'common_words': 'Common Words'}, height=400)
 		wordfig1 = wordfig.to_html()
 
-			
-		return render_template('index.html',wordfig1=wordfig1,rawtext=rawtext,tw_html=tw_html2,fig=fig,fig3 = fig3)
+		# ========================================================
+		sorted_df= tw_df1.sort_values(by=['polarity'],ascending = False).head(1)
+		# best_tweet = sorted_df[sorted_df['polarity'] == sorted_df['polarity'].max()].head(1)
+		best_tweet = sorted_df
+		filtered_best_tweet = best_tweet.drop(columns=['created_date', 'retweet_count', 'likes_count'])
+		text1 = filtered_best_tweet.text.tolist()
+		name1 = filtered_best_tweet.handle.tolist()
+		pol1 = filtered_best_tweet.polarity.tolist()
+		sorted_df1= tw_df1.sort_values(by=['polarity'],ascending = True).head(1)
+		worst_tweet = sorted_df1
+		# worst_tweet = sorted_df[sorted_df['polarity'] == sorted_df['polarity'].min()]
+		filtered_worst_tweet = worst_tweet.drop(columns=['created_date', 'retweet_count', 'likes_count'])
+		text2 = filtered_worst_tweet.text.tolist()
+		name2 = filtered_worst_tweet.handle.tolist()
+		pol2 = filtered_worst_tweet.polarity.tolist()
+		return render_template('index.html',pol1 = pol1[0],pol2 = pol2[0],name2 = name2[0], text2 = text2[0],name1= name1[0],text1=text1[0],wordfig1=wordfig1,rawtext=rawtext,tw_html2=tw_html2,fig=fig,fig3 = fig3)
 
 
 
