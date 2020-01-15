@@ -16,15 +16,19 @@ Retrieved tweeter data is organized into a number of dictionaries and stored int
 •	Heroku deployment
 
 # Visualization:
-User will make a selection from the search dropdown menu, type desired search value and hit “Go” button.  For example below we will select “handle” and type “realonaldtrump” in the input field.  Once the request is executed the app will update the page.  
+User will make a selection from the search dropdown menu, type desired search value and hit “Go” button.  For example below we will select “handle” and type “realonaldtrump” in the input field.  Once the request is executed the app will update the page. 
+
 ![Search_function] < insert link to the video of the search >
 
 The scatter plot shows each retweet and its polarity value color-coded by the sentiment classification.
+
 ![Scatter] < insert link to the image of the scatter plot >
 
 The gauge plot show mean sentiment value for the current search output.
+
 ![Gauge] < insert link to the image of the gauge plot >
 
 The table show the summary of data received from the current search.
+
 ![Table] < insert link to the image of the table >
 
