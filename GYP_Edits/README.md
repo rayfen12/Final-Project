@@ -24,11 +24,11 @@ The scatter plot shows each retweet and its polarity value color-coded by the se
 
 ![scatter](images/scatter.png)
 
-The gauge plot show mean sentiment value for the current search output.
+The gauge plot shows mean sentiment value for the current search output.
 
 ![gauge](images/gauge.png)
 
-The table show the summary of data received from the current search.
+The table shows the summary of data received from the current search.
 
 ![table](images/table.png)
 
