@@ -18,17 +18,17 @@ Retrieved tweeter data is organized into a number of dictionaries and stored int
 ### Visualization:
 User will make a selection from the search dropdown menu, type desired search value and hit “Go” button.  For example below we will select “handle” and type “realonaldtrump” in the input field.  Once the request is executed the app will update the page. 
 
-![search] < images/search.swf >
+![search](images/search.swf)
 
 The scatter plot shows each retweet and its polarity value color-coded by the sentiment classification.
 
-![scatter] < images/scatter.png >
+![scatter](images/scatter.png)
 
 The gauge plot show mean sentiment value for the current search output.
 
-![gauge] < images/gauge.png >
+![gauge](images/gauge.png)
 
 The table show the summary of data received from the current search.
 
-![table] < images/table.png >
+![table](images/table.png)
 
