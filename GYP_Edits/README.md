@@ -16,7 +16,7 @@ Retrieved tweeter data is organized into a number of dictionaries and stored int
 * Heroku 
 
 ### Visualization:
-User will make a selection from the search dropdown menu, type desired search value and hit “Go” button.  For example below we will select “handle” and type “realonaldtrump” in the input field.  Once the request is executed the app will update the page. 
+User will make a selection from the search dropdown menu, type desired search value and hit “Go” button.  For example below we will select “handle” and type “realdonaldtrump” in the input field.  Once the request is executed the app will update the page. 
 
 ![search](images/search.swf)
 
