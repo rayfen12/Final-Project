@@ -117,7 +117,7 @@ def analyze():
 		text2 = filtered_worst_tweet.text.tolist()
 		name2 = filtered_worst_tweet.handle.tolist()
 		pol2 = filtered_worst_tweet.polarity.tolist()
-		return render_template('index.html',pol1 = pol1[0],pol2 = pol2[0],name2 = name2[0], text2 = text2[0],name1= name1[0],text1=text1[0],rawtext=rawtext,tw_html2=tw_html2,fig=fig,fig3 = fig3)
+		return render_template('index.html',pol1 = pol1[0],pol2 = pol2[0],name2 = name2[0], text2 = text2[0],name1= name1[0],text1=text1[0],rawtext=rawtext,tw_html2=tw_html2,fig=fig,fig3 = fig3,at="@",br="|")
 
 
 
@@ -178,12 +178,28 @@ def analyze():
 			mode = "gauge+number+delta",
 			title = {'text': "Sentiment"},
 			gauge = {'axis': {'range': [-1, 1]},
-					'bar': {'color': "grey"},
+					'bar': {'color': "white"},
 					'steps' : [
-						{'range': [-1, -0.5], 'color': "indianred"},
-						{'range': [-0.5, 0], 'color': "red"},
-						{'range': [0, 0.5], 'color': "lightgreen"},
-						{'range': [0.5, 1], 'color': "green"}]}))
+						{"range":[-1,-0.9],"color":"#EB002E"},
+						{"range":[-0.9,-0.8],"color":"#E30C33"},
+						{"range":[-0.8,-0.7],"color":"#DC1838"},
+						{"range":[-0.7,-0.6],"color":"#D4243D"},
+						{"range":[-0.6,-0.5],"color":"#CD3143"},
+						{"range":[-0.5,-0.4],"color":"#CD3143"},
+						{"range":[-0.4,-0.3],"color":"#C53D48"},
+						{"range":[-0.3,-0.2],"color":"#B65652"},
+						{"range":[-0.2,-0.1],"color":"#AF6258"},
+						{"range":[-0.1,0],"color":"#A76E5D"},
+						{"range":[0,0.1],"color":"#988767"},
+						{"range":[0.1,0.2],"color":"#91936D"},
+						{"range":[0.2,0.3],"color":"#899F72"},
+						{"range":[0.3,0.4],"color":"#82AC77"},
+						{"range":[0.4,0.5],"color":"#7AB87C"},
+						{"range":[0.5,0.6],"color":"#73C482"},
+						{"range":[0.6,0.7],"color":"#6BD187"},
+						{"range":[0.7,0.8],"color":"#64DD8C"},
+						{"range":[0.8,0.9],"color":"#5CE991"},
+						{"range":[0.9,1],"color":"#55F697"}]}))
 		fig3 = fig2.to_html()
 		# ================================================	
 		fig1 = px.scatter(tw_df1, x='retweet_count', y='polarity', hover_name="handle", color = 'sentiment')
@@ -213,7 +229,7 @@ def analyze():
 		text2 = filtered_worst_tweet.text.tolist()
 		name2 = filtered_worst_tweet.handle.tolist()
 		pol2 = filtered_worst_tweet.polarity.tolist()
-		return render_template('index.html',pol1 = pol1[0],pol2 = pol2[0],name2 = name2[0], text2 = text2[0],name1= name1[0],text1=text1[0],wordfig1=wordfig1,rawtext=rawtext,tw_html2=tw_html2,fig=fig,fig3 = fig3)
+		return render_template('index.html',pol1 = pol1[0],pol2 = pol2[0],name2 = name2[0], text2 = text2[0],name1= name1[0],text1=text1[0],wordfig1=wordfig1,rawtext=rawtext,tw_html2=tw_html2,fig=fig,fig3 = fig3,at="@",br="|")
 
 
 
